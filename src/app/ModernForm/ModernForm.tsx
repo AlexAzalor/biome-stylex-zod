@@ -2,6 +2,8 @@
 
 import stylex from "@stylexjs/stylex";
 import { useState } from "react";
+import { FormInput } from "../PrimitiveForm/FormInput";
+import { UserInfo } from "../PrimitiveForm/UserInfo";
 import {
   validateAge,
   validateEmail,
@@ -9,8 +11,6 @@ import {
   validatePassword,
   validateURL,
 } from "../utils";
-import { FormInput } from "./FormInput";
-import { UserInfo } from "./UserInfo";
 
 export type FormError = {
   name: string | null;
@@ -22,7 +22,7 @@ export type FormError = {
   terms: string | null;
 };
 
-export const PrimitiveForm = () => {
+export const ModernForm = () => {
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -121,12 +121,11 @@ export const PrimitiveForm = () => {
 
   return (
     <div {...stylex.props(styles.text)}>
+      <UserInfo {...user} />
       <form onSubmit={handleSubmit} {...stylex.props(styles.flex)}>
         <div {...stylex.props(styles.form)}>
-          <div {...stylex.props(styles.title)}>Primitive Form</div>
-          <div {...stylex.props(styles.subtitle)}>
-            Only vanilla React with TypeScript
-          </div>
+          <div {...stylex.props(styles.title)}>Modern Form</div>
+          <div {...stylex.props(styles.subtitle)}>React Hook Form + Zod</div>
 
           <FormInput
             label="Name"
@@ -191,8 +190,6 @@ export const PrimitiveForm = () => {
           </button>
         </div>
       </form>
-
-      <UserInfo {...user} />
     </div>
   );
 };

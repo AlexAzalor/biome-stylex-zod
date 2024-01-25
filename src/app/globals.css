@@ -1,4 +1,9 @@
 html {
-  background-color: #1f1b37;
+  /* background-color: #1f1b37; */
   text-align: center;
+  background: url("/static/react-zod-1.png") center / cover no-repeat fixed;
+  /* background: url("/static/react-zod-3.jpg") center / cover no-repeat fixed; */
+
+  /* background: url("/static/react-zod-2.jpg") center / cover no-repeat fixed; */
+  /* background: url("/static/react-zod-4.png") center / cover no-repeat fixed; */
 }
