@@ -2,6 +2,8 @@
 
 import stylex from "@stylexjs/stylex";
 import { useState } from "react";
+import { simulateApiRequest } from "../api/api";
+import type { User } from "../types";
 import {
   validateAge,
   validateEmail,
@@ -22,101 +24,110 @@ export type FormError = {
   terms: string | null;
 };
 
+const defaultErrorState: FormError = {
+  name: null,
+  email: null,
+  age: null,
+  url: null,
+  password: null,
+  confirmPassword: null,
+  terms: null,
+};
+
+const defaultUserState: User = {
+  name: "",
+  email: "",
+  age: "",
+  url: "",
+};
+
 export const PrimitiveForm = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    age: "",
-    url: "",
-  });
+  const [user, setUser] = useState<User>(defaultUserState);
+  const [error, setError] = useState<FormError>(defaultErrorState);
+  const [loading, setLoading] = useState(false);
 
-  const [error, setError] = useState<FormError>({
-    name: null,
-    email: null,
-    age: null,
-    url: null,
-    password: null,
-    confirmPassword: null,
-    terms: null,
-  });
+  const handleVerify = (
+    type: string,
+    message: string,
+    approveMessage: string,
+    specialMessage?: string,
+  ) => {
+    if (message === approveMessage) {
+      setError((prev) => ({ ...prev, [type]: null }));
+      return false;
+    }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    setError((prev) => ({ ...prev, [type]: specialMessage || message }));
+    return true;
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);
 
-    const name = data.get("name") as string;
-    const email = data.get("email") as string;
-    const age = data.get("age") as string;
-    const url = data.get("url") as string;
-    const password = data.get("password") as string;
-    const confirm = data.get("confirm") as string;
+    const name = (data.get("name") as string).trim();
+    const email = (data.get("email") as string).trim();
+    const age = (data.get("age") as string).trim();
+    const url = (data.get("url") as string).trim();
+    const password = (data.get("password") as string).trim();
+    const confirm = (data.get("confirm") as string).trim();
     const terms = data.get("terms") as string;
 
     const validName = validateName(name);
-    console.log(validName);
-
-    if (validName === "Name is valid") {
-      setError((prev) => ({ ...prev, name: null }));
-    } else {
-      setError((prev) => ({ ...prev, name: validName }));
-      return;
-    }
+    const isNameVerified = handleVerify("name", validName, "Name is valid");
 
     const validEmail = validateEmail(email);
-
-    if (validEmail) {
-      setError((prev) => ({ ...prev, email: null }));
-    } else {
-      setError((prev) => ({ ...prev, email: "Email is invalid" }));
-      return;
-    }
+    const isEmailVerified = handleVerify("email", validEmail, "Email is valid");
 
     const validAge = validateAge(Number(age));
-
-    if (validAge === "Age is valid") {
-      setError((prev) => ({ ...prev, age: null }));
-    } else {
-      setError((prev) => ({ ...prev, age: validAge }));
-      return;
-    }
+    const isAgeVerified = handleVerify("age", validAge, "Age is valid");
 
     const validUrl = validateURL(url);
-
-    if (validUrl === "URL is valid") {
-      setError((prev) => ({ ...prev, url: null }));
-    } else {
-      setError((prev) => ({ ...prev, url: validUrl }));
-      return;
-    }
+    const isURLVerified = handleVerify("url", validUrl, "URL is valid");
 
     const validPassword = validatePassword(password);
+    const isPasswrodVerified = handleVerify(
+      "password",
+      validPassword,
+      "Password is valid",
+    );
 
-    if (validPassword === "Password is valid") {
-      setError((prev) => ({ ...prev, password: null }));
-    } else {
-      setError((prev) => ({ ...prev, password: validPassword }));
+    const isPasswordConfirm = handleVerify(
+      "confirmPassword",
+      confirm,
+      password,
+      "Passwords do not match",
+    );
+
+    const isTermsCheck = handleVerify(
+      "terms",
+      terms,
+      "on",
+      "Please agree to the terms",
+    );
+
+    if (
+      isNameVerified ||
+      isEmailVerified ||
+      isAgeVerified ||
+      isURLVerified ||
+      isPasswrodVerified ||
+      isPasswordConfirm ||
+      isTermsCheck
+    ) {
       return;
     }
 
-    if (confirm === password) {
-      setError((prev) => ({ ...prev, confirmPassword: null }));
-    } else {
-      setError((prev) => ({
-        ...prev,
-        confirmPassword: "Passwords do not match",
-      }));
-      return;
-    }
+    try {
+      setLoading(true);
+      const response = await simulateApiRequest({ name, email, age, url });
 
-    if (terms === "on") {
-      setError((prev) => ({ ...prev, terms: null }));
-    } else {
-      setError((prev) => ({ ...prev, terms: "Please agree to the terms" }));
-      return;
+      setLoading(false);
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    setUser({ name, email, age, url });
   };
 
   return (
@@ -187,15 +198,41 @@ export const PrimitiveForm = () => {
           </div>
 
           <button type="submit" {...stylex.props(styles.submit)}>
-            submit
+            Submit
           </button>
         </div>
       </form>
+
+      <div {...stylex.props(loading ? spinner.icon : null)} />
 
       <UserInfo {...user} />
     </div>
   );
 };
+
+const rotate = stylex.keyframes({
+  "0%": { transform: "rotate(0deg)" },
+  "100%": { transform: "rotate(360deg)" },
+});
+
+const spinner = stylex.create({
+  icon: {
+    display: "inline-block",
+    width: "80px",
+    height: "80px",
+    "::after": {
+      content: '""',
+      display: "block",
+      width: "64px",
+      height: "64px",
+      margin: "8px",
+      borderRadius: "50%",
+      border: "6px solid #fff",
+      borderColor: "#fff transparent #fff transparent",
+      animation: `${rotate} 1.2s linear infinite`,
+    },
+  },
+});
 
 const styles = stylex.create({
   text: {

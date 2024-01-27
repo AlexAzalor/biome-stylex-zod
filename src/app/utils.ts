@@ -18,15 +18,19 @@ export const validateName = (name: string) => {
   return "Name is valid";
 };
 
-export const validateEmail = (email: FormDataEntryValue): boolean => {
+export const validateEmail = (email: FormDataEntryValue) => {
   if (!email) {
-    return false;
+    return "Email cannot be empty";
   }
 
   const regexEmal = "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$";
   const validEmail = !!email?.toString().match(regexEmal);
 
-  return validEmail;
+  if (!validEmail) {
+    return "Invalid email format";
+  }
+
+  return "Email is valid";
 };
 
 export const validateAge = (age: number) => {
