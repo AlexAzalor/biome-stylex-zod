@@ -2,6 +2,7 @@
 
 import stylex from "@stylexjs/stylex";
 import { useState } from "react";
+import { Spinner } from "../Spinner";
 import { simulateApiRequest } from "../api/api";
 import type { User } from "../types";
 import {
@@ -9,6 +10,7 @@ import {
   validateEmail,
   validateName,
   validatePassword,
+  validatePhone,
   validateURL,
 } from "../utils";
 import { FormInput } from "./FormInput";
@@ -17,27 +19,29 @@ import { UserInfo } from "./UserInfo";
 export type FormError = {
   name: string | null;
   email: string | null;
+  phone: string | null;
   age: string | null;
   url: string | null;
   password: string | null;
   confirmPassword: string | null;
-  terms: string | null;
+  terms: boolean;
 };
 
 const defaultErrorState: FormError = {
   name: null,
   email: null,
+  phone: null,
   age: null,
   url: null,
   password: null,
   confirmPassword: null,
-  terms: null,
+  terms: false,
 };
 
 const defaultUserState: User = {
   name: "",
   email: "",
-  age: "",
+  age: 0,
   url: "",
 };
 
@@ -68,6 +72,7 @@ export const PrimitiveForm = () => {
 
     const name = (data.get("name") as string).trim();
     const email = (data.get("email") as string).trim();
+    const phone = (data.get("phone") as string).trim();
     const age = (data.get("age") as string).trim();
     const url = (data.get("url") as string).trim();
     const password = (data.get("password") as string).trim();
@@ -79,6 +84,9 @@ export const PrimitiveForm = () => {
 
     const validEmail = validateEmail(email);
     const isEmailVerified = handleVerify("email", validEmail, "Email is valid");
+
+    const validPhone = validatePhone(phone);
+    const isPhoneVerified = handleVerify("phone", validPhone, "Phone is valid");
 
     const validAge = validateAge(Number(age));
     const isAgeVerified = handleVerify("age", validAge, "Age is valid");
@@ -110,6 +118,7 @@ export const PrimitiveForm = () => {
     if (
       isNameVerified ||
       isEmailVerified ||
+      isPhoneVerified ||
       isAgeVerified ||
       isURLVerified ||
       isPasswrodVerified ||
@@ -121,10 +130,23 @@ export const PrimitiveForm = () => {
 
     try {
       setLoading(true);
-      const response = await simulateApiRequest({ name, email, age, url });
+      const response = await simulateApiRequest({
+        name,
+        email,
+        phone,
+        age: Number(age),
+        url,
+        password,
+        terms: !!terms,
+      });
 
       setLoading(false);
-      setUser(response.data);
+      setUser({
+        name: response.data.name,
+        email: response.data.email,
+        age: response.data.age,
+        url: response.data.url,
+      });
     } catch (error) {
       console.error("Error:", error);
     }
@@ -153,6 +175,14 @@ export const PrimitiveForm = () => {
             type="text"
             labelWidth={50}
             error={error.email}
+          />
+
+          <FormInput
+            label="Phone"
+            code="phone"
+            type="text"
+            labelWidth={54}
+            error={error.phone}
           />
 
           <FormInput
@@ -203,36 +233,12 @@ export const PrimitiveForm = () => {
         </div>
       </form>
 
-      <div {...stylex.props(loading ? spinner.icon : null)} />
+      {loading && <Spinner />}
 
       <UserInfo {...user} />
     </div>
   );
 };
-
-const rotate = stylex.keyframes({
-  "0%": { transform: "rotate(0deg)" },
-  "100%": { transform: "rotate(360deg)" },
-});
-
-const spinner = stylex.create({
-  icon: {
-    display: "inline-block",
-    width: "80px",
-    height: "80px",
-    "::after": {
-      content: '""',
-      display: "block",
-      width: "64px",
-      height: "64px",
-      margin: "8px",
-      borderRadius: "50%",
-      border: "6px solid #fff",
-      borderColor: "#fff transparent #fff transparent",
-      animation: `${rotate} 1.2s linear infinite`,
-    },
-  },
-});
 
 const styles = stylex.create({
   text: {

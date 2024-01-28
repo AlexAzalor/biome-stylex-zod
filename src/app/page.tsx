@@ -20,8 +20,9 @@ const styles = stylex.create({
   main: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(min(650px, 100%), 1fr))",
+    gridAutoRows: "minmax(auto, auto)",
     // gridTemplateColumns: "1fr 1fr",
-    alignItems: "center",
+    alignItems: "baseline",
     placeItems: "center",
     gap: "20px",
   },
@@ -32,5 +33,6 @@ const styles = stylex.create({
     fontSize: 42,
     fontWeight: "bold",
     color: "#2D64AC",
+    margin: 0,
   },
 });

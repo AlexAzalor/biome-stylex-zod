@@ -5,7 +5,7 @@ import stylex from "@stylexjs/stylex";
 type Props = {
   name: string;
   email: string;
-  age: string;
+  age: number;
   url: string;
 };
 

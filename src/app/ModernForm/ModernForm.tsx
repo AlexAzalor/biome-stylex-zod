@@ -1,20 +1,20 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import stylex from "@stylexjs/stylex";
+import axios from "axios";
 import { useState } from "react";
-import { FormInput } from "../PrimitiveForm/FormInput";
+import { useForm } from "react-hook-form";
 import { UserInfo } from "../PrimitiveForm/UserInfo";
-import {
-  validateAge,
-  validateEmail,
-  validateName,
-  validatePassword,
-  validateURL,
-} from "../utils";
+import { Spinner } from "../Spinner";
+import { FormData, ValidFieldNames } from "../types";
+import { UserSchema } from "../types/zod-scheme";
+import { FormField } from "./FormField";
 
 export type FormError = {
   name: string | null;
   email: string | null;
+  phone: string | null;
   age: string | null;
   url: string | null;
   password: string | null;
@@ -26,167 +26,172 @@ export const ModernForm = () => {
   const [user, setUser] = useState({
     name: "",
     email: "",
-    age: "",
+    age: 0,
     url: "",
   });
-
-  const [error, setError] = useState<FormError>({
-    name: null,
-    email: null,
-    age: null,
-    url: null,
-    password: null,
-    confirmPassword: null,
-    terms: null,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<FormData>({
+    resolver: zodResolver(UserSchema),
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = async (data: FormData) => {
+    console.log("SUCCESS", data);
 
-    const data = new FormData(event.currentTarget);
+    try {
+      setLoading(true);
+      // // Data sent in axios with incorrect data
+      // const response2 = await axios.post("/api/form", {
+      //   name: 1234,
+      //   email: "Not an email",
+      //   url: "Not a URL",
+      //   age: "Hello",
+      //   password: 1234,
+      //   confirmPassword: 12345,
+      //   terms: false,
+      // }); // Make a POST request
+      // console.log("response2", response2);
 
-    const name = data.get("name") as string;
-    const email = data.get("email") as string;
-    const age = data.get("age") as string;
-    const url = data.get("url") as string;
-    const password = data.get("password") as string;
-    const confirm = data.get("confirm") as string;
-    const terms = data.get("terms") as string;
+      const response = await axios.post("/api/form", data);
+      console.log("response", response);
 
-    const validName = validateName(name);
-    console.log(validName);
+      const { errors = {} } = response.data;
 
-    if (validName === "Name is valid") {
-      setError((prev) => ({ ...prev, name: null }));
-    } else {
-      setError((prev) => ({ ...prev, name: validName }));
-      return;
+      // Define a mapping between server-side field names and their corresponding client-side names
+      const fieldErrorMapping: Record<string, ValidFieldNames> = {
+        name: "name",
+        email: "email",
+        url: "url",
+        age: "age",
+        password: "password",
+        confirmPassword: "confirmPassword",
+        terms: "terms",
+      };
+
+      // Find the first field with an error in the response data
+      const fieldWithError = Object.keys(fieldErrorMapping).find(
+        (field) => errors[field],
+      );
+
+      // If a field with an error is found, update the form error state using setError
+      if (fieldWithError) {
+        // Use the ValidFieldNames type to ensure the correct field names
+        setError(fieldErrorMapping[fieldWithError], {
+          type: "server",
+          message: errors[fieldWithError],
+        });
+      }
+      setUser({
+        name: data.name,
+        email: data.email,
+        age: data.age,
+        url: data.url,
+      });
+      setLoading(false);
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    } catch (error: any) {
+      setLoading(false);
+      console.log("error", error);
+
+      alert("Submitting form failed!");
     }
-
-    const validEmail = validateEmail(email);
-
-    if (validEmail) {
-      setError((prev) => ({ ...prev, email: null }));
-    } else {
-      setError((prev) => ({ ...prev, email: "Email is invalid" }));
-      return;
-    }
-
-    const validAge = validateAge(Number(age));
-
-    if (validAge === "Age is valid") {
-      setError((prev) => ({ ...prev, age: null }));
-    } else {
-      setError((prev) => ({ ...prev, age: validAge }));
-      return;
-    }
-
-    const validUrl = validateURL(url);
-
-    if (validUrl === "URL is valid") {
-      setError((prev) => ({ ...prev, url: null }));
-    } else {
-      setError((prev) => ({ ...prev, url: validUrl }));
-      return;
-    }
-
-    const validPassword = validatePassword(password);
-
-    if (validPassword === "Password is valid") {
-      setError((prev) => ({ ...prev, password: null }));
-    } else {
-      setError((prev) => ({ ...prev, password: validPassword }));
-      return;
-    }
-
-    if (confirm === password) {
-      setError((prev) => ({ ...prev, confirmPassword: null }));
-    } else {
-      setError((prev) => ({
-        ...prev,
-        confirmPassword: "Passwords do not match",
-      }));
-      return;
-    }
-
-    if (terms === "on") {
-      setError((prev) => ({ ...prev, terms: null }));
-    } else {
-      setError((prev) => ({ ...prev, terms: "Please agree to the terms" }));
-      return;
-    }
-
-    setUser({ name, email, age, url });
   };
 
   return (
     <div {...stylex.props(styles.text)}>
       <UserInfo {...user} />
-      <form onSubmit={handleSubmit} {...stylex.props(styles.flex)}>
+      {loading && <Spinner />}
+
+      <form onSubmit={handleSubmit(onSubmit)} {...stylex.props(styles.flex)}>
         <div {...stylex.props(styles.form)}>
           <div {...stylex.props(styles.title)}>Modern Form</div>
-          <div {...stylex.props(styles.subtitle)}>React Hook Form + Zod</div>
+          <div {...stylex.props(styles.subtitle)}>Zod + React Hook Form</div>
 
-          <FormInput
+          <FormField
+            type="text"
             label="Name"
-            code="name"
-            type="text"
+            name="name"
+            register={register}
+            error={errors.name}
             labelWidth={52}
-            error={error.name}
           />
 
-          <FormInput
+          <FormField
+            type="email"
             label="Email"
-            code="email"
-            type="text"
+            name="email"
+            register={register}
+            error={errors.email}
             labelWidth={50}
-            error={error.email}
+          />
+          <FormField
+            type="text"
+            label="Phone"
+            name="phone"
+            register={register}
+            error={errors.phone}
+            labelWidth={54}
           />
 
-          <FormInput
+          <FormField
+            type="text"
             label="Age"
-            code="age"
-            type="text"
+            name="age"
+            register={register}
+            error={errors.age}
+            valueAsNumber
             labelWidth={42}
-            error={error.age}
           />
 
-          <FormInput
+          <FormField
+            type="text"
             label="Website URL"
-            code="url"
-            type="text"
+            name="url"
+            register={register}
+            error={errors.url}
             labelWidth={94}
-            error={error.url}
           />
 
-          <FormInput
+          {/* no copy */}
+          <FormField
+            type="password"
             label="Password"
-            code="password"
-            type="text"
+            name="password"
+            register={register}
+            error={errors.password}
             labelWidth={76}
-            error={error.password}
           />
 
-          <FormInput
-            label="Confirm password"
-            code="confirm"
-            type="text"
+          <FormField
+            type="password"
+            label="Confirm Password"
+            name="confirmPassword"
+            register={register}
+            error={errors.confirmPassword}
             labelWidth={124}
-            error={error.confirmPassword}
           />
 
           <div {...stylex.props(styles.terms)}>
-            <label {...stylex.props(styles.termsLabel)} htmlFor="terms">
-              <input id="terms" type="checkbox" name="terms" />
-              <span>I agree to the terms and conditions</span>
+            <label {...stylex.props(styles.termsLabel)}>
+              <input
+                type="checkbox"
+                {...register("terms", { required: true })}
+              />
+              I agree to the terms and conditions
             </label>
-            {error.terms && (
-              <div {...stylex.props(styles.error)}>{error.terms}</div>
+            {errors.terms && (
+              <div {...stylex.props(styles.error)}>
+                You must agree to the terms and conditions
+              </div>
             )}
           </div>
 
           <button type="submit" {...stylex.props(styles.submit)}>
-            submit
+            Submit
           </button>
         </div>
       </form>

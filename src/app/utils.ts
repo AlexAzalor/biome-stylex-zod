@@ -33,6 +33,26 @@ export const validateEmail = (email: FormDataEntryValue) => {
   return "Email is valid";
 };
 
+export const validatePhone = (phone: string) => {
+  if (!phone) {
+    return "Phone cannot be empty";
+  }
+
+  if (!/^\d+$/.test(phone)) {
+    return "Phone must contain only digits";
+  }
+
+  if (phone.length < 10) {
+    return "Phone must be at least 10 digits long";
+  }
+
+  if (phone.length > 14) {
+    return "Phone must be no more than 15 digits long";
+  }
+
+  return "Phone is valid";
+};
+
 export const validateAge = (age: number) => {
   if (!age && age !== 0) {
     return "Age cannot be empty";
