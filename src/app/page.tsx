@@ -1,8 +1,9 @@
 "use client";
 
 import stylex from "@stylexjs/stylex";
-import { ModernForm } from "./ModernForm/ModernForm";
-import { PrimitiveForm } from "./PrimitiveForm/PrimitiveForm";
+
+import { ModernForm } from "./components/ModernForm/ModernForm";
+import { PrimitiveForm } from "./components/PrimitiveForm/PrimitiveForm";
 
 export default function Home() {
   return (

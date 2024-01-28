@@ -1,5 +1,5 @@
 import { ZodType, z } from "zod";
-import { FormData } from "../types";
+import { FormData } from "./types";
 
 export const UserSchema: ZodType<FormData> = z
   .object({
@@ -12,11 +12,9 @@ export const UserSchema: ZodType<FormData> = z
       .string()
       // .min(10, { message: "Phone numbers are a minimum of 10 digits" })
       // .max(14, { message: "Phone numbers are a maximum of 14 digits" })
-      .regex(/^[0-9]+$/, { message: "Only numbers are allowed" })
-      .length(10, { message: "Ten numbers are required" }),
-    // .transform(
-    //   (val) => `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6)}`,
-    // ),
+      .regex(/^[+0-9]+$/, { message: "Only numbers are allowed" })
+      // .length(10, { message: "Ten numbers are required" })
+      .transform((val) => `+${val}`),
     age: z
       .number({
         required_error: "required field",

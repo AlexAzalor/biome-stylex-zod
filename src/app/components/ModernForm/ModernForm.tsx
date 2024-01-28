@@ -3,32 +3,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import stylex from "@stylexjs/stylex";
 import axios from "axios";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { UserInfo } from "../PrimitiveForm/UserInfo";
+
+import { formStyles } from "@/app/styles/form-styles";
+import { FormData, ValidFieldNames } from "@/app/types/types";
+import { UserSchema } from "@/app/types/zod-scheme";
+import { defaultUserState } from "../PrimitiveForm/PrimitiveForm";
 import { Spinner } from "../Spinner";
-import { FormData, ValidFieldNames } from "../types";
-import { UserSchema } from "../types/zod-scheme";
+import { UserInfo } from "../User/UserInfo";
 import { FormField } from "./FormField";
 
-export type FormError = {
-  name: string | null;
-  email: string | null;
-  phone: string | null;
-  age: string | null;
-  url: string | null;
-  password: string | null;
-  confirmPassword: string | null;
-  terms: string | null;
-};
-
 export const ModernForm = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    age: 0,
-    url: "",
-  });
   const {
     register,
     handleSubmit,
@@ -37,6 +24,8 @@ export const ModernForm = () => {
   } = useForm<FormData>({
     resolver: zodResolver(UserSchema),
   });
+
+  const [user, setUser] = useState(defaultUserState);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
@@ -90,6 +79,7 @@ export const ModernForm = () => {
         email: data.email,
         age: data.age,
         url: data.url,
+        phone: data.phone,
       });
       setLoading(false);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -102,14 +92,19 @@ export const ModernForm = () => {
   };
 
   return (
-    <div {...stylex.props(styles.text)}>
+    <div {...stylex.props(formStyles.text)}>
       <UserInfo {...user} />
       {loading && <Spinner />}
 
-      <form onSubmit={handleSubmit(onSubmit)} {...stylex.props(styles.flex)}>
-        <div {...stylex.props(styles.form)}>
-          <div {...stylex.props(styles.title)}>Modern Form</div>
-          <div {...stylex.props(styles.subtitle)}>Zod + React Hook Form</div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        {...stylex.props(formStyles.flex)}
+      >
+        <div {...stylex.props(formStyles.form)}>
+          <div {...stylex.props(formStyles.title)}>Modern Form</div>
+          <div {...stylex.props(formStyles.subtitle)}>
+            Zod + React Hook Form
+          </div>
 
           <FormField
             type="text"
@@ -175,8 +170,8 @@ export const ModernForm = () => {
             labelWidth={124}
           />
 
-          <div {...stylex.props(styles.terms)}>
-            <label {...stylex.props(styles.termsLabel)}>
+          <div {...stylex.props(formStyles.terms)}>
+            <label {...stylex.props(formStyles.termsLabel)}>
               <input
                 type="checkbox"
                 {...register("terms", { required: true })}
@@ -184,13 +179,13 @@ export const ModernForm = () => {
               I agree to the terms and conditions
             </label>
             {errors.terms && (
-              <div {...stylex.props(styles.error)}>
+              <div {...stylex.props(formStyles.error)}>
                 You must agree to the terms and conditions
               </div>
             )}
           </div>
 
-          <button type="submit" {...stylex.props(styles.submit)}>
+          <button type="submit" {...stylex.props(formStyles.submit)}>
             Submit
           </button>
         </div>
@@ -198,78 +193,3 @@ export const ModernForm = () => {
     </div>
   );
 };
-
-const styles = stylex.create({
-  text: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    fontWeight: "bold",
-    color: "orange",
-  },
-  flex: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-  },
-  error: {
-    color: "tomato",
-  },
-  form: {
-    backgroundColor: "#15172b",
-    borderRadius: "20px",
-    boxSizing: "border-box",
-    height: "max-content",
-    padding: "20px",
-    width: "320px",
-  },
-  title: {
-    color: "#eee",
-    fontFamily: "sans-serif",
-    fontSize: "36px",
-    fontWeight: 600,
-    marginTop: "30px",
-  },
-  subtitle: {
-    color: "#eee",
-    fontFamily: "sans-serif",
-    fontSize: "16px",
-    fontWeight: 600,
-    marginTop: "10px",
-  },
-
-  submit: {
-    backgroundColor: "#08d",
-    borderRadius: "12px",
-    border: 0,
-    boxSizing: "border-box",
-    color: "#eee",
-    cursor: "pointer",
-    fontSize: "18px",
-    height: "50px",
-    marginTop: "28px",
-    textAlign: "center",
-    width: "100%",
-    transition: "all 0.3s ease-in-out",
-    ":active": {
-      backgroundColor: "#06b",
-    },
-    ":hover": {
-      background: "#03e9f4",
-      color: "#fff",
-      borderRadius: "5px",
-      boxShadow:
-        "0 0 5px #47aeee,0 0 6px #47aeee,0 0 26px #47aeee,0 0 28px #47aeee",
-    },
-  },
-  terms: {
-    textAlign: "left",
-    marginTop: "20px",
-  },
-  termsLabel: {
-    display: "flex",
-    gap: "8px",
-    alignItems: "center",
-    padding: "4px",
-  },
-});

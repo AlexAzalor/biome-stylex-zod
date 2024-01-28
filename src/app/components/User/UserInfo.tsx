@@ -1,5 +1,3 @@
-"use client";
-
 import stylex from "@stylexjs/stylex";
 
 type Props = {
@@ -7,10 +5,11 @@ type Props = {
   email: string;
   age: number;
   url: string;
+  phone: string;
 };
 
-export const UserInfo = ({ name, email, age, url }: Props) => {
-  if (!name || !email || !age || !url) {
+export const UserInfo = ({ name, email, age, url, phone }: Props) => {
+  if (!name || !email || !age || !url || !phone) {
     return null;
   }
 
@@ -20,6 +19,7 @@ export const UserInfo = ({ name, email, age, url }: Props) => {
       <div {...stylex.props(styles.text)}>Email: {email}</div>
       <div {...stylex.props(styles.text)}>Age: {age}</div>
       <div {...stylex.props(styles.text)}>URL: {url}</div>
+      <div {...stylex.props(styles.text)}>Phone: {phone}</div>
     </div>
   );
 };

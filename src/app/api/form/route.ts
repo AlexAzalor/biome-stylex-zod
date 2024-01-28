@@ -1,4 +1,4 @@
-import { FormData } from "@/app/types";
+import { FormData } from "@/app/types/types";
 import { UserSchema } from "@/app/types/zod-scheme";
 import { NextResponse } from "next/server";
 import { simulateApiRequest } from "../api";

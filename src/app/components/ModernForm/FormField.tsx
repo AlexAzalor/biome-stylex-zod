@@ -1,5 +1,5 @@
+import { FormFieldProps } from "@/app/types/types";
 import stylex from "@stylexjs/stylex";
-import { FormFieldProps } from "../types";
 
 export const FormField: React.FC<FormFieldProps> = ({
   type,

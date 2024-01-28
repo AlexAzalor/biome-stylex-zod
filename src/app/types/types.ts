@@ -5,6 +5,7 @@ export type User = {
   email: string;
   age: number;
   url: string;
+  phone: string;
 };
 
 export type ApiResponse<T> = {
@@ -41,3 +42,14 @@ export type ValidFieldNames =
   | "password"
   | "confirmPassword"
   | "terms";
+
+export type FormError = {
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  age: string | null;
+  url: string | null;
+  password: string | null;
+  confirmPassword: string | null;
+  terms: boolean;
+};

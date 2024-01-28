@@ -2,9 +2,9 @@
 
 import stylex from "@stylexjs/stylex";
 import { useState } from "react";
-import { Spinner } from "../Spinner";
-import { simulateApiRequest } from "../api/api";
-import type { User } from "../types";
+import { simulateApiRequest } from "../../api/api";
+import { formStyles } from "../../styles/form-styles";
+import type { FormError, User } from "../../types/types";
 import {
   validateAge,
   validateEmail,
@@ -12,20 +12,10 @@ import {
   validatePassword,
   validatePhone,
   validateURL,
-} from "../utils";
+} from "../../utils";
+import { Spinner } from "../Spinner";
+import { UserInfo } from "../User/UserInfo";
 import { FormInput } from "./FormInput";
-import { UserInfo } from "./UserInfo";
-
-export type FormError = {
-  name: string | null;
-  email: string | null;
-  phone: string | null;
-  age: string | null;
-  url: string | null;
-  password: string | null;
-  confirmPassword: string | null;
-  terms: boolean;
-};
 
 const defaultErrorState: FormError = {
   name: null,
@@ -38,11 +28,12 @@ const defaultErrorState: FormError = {
   terms: false,
 };
 
-const defaultUserState: User = {
+export const defaultUserState: User = {
   name: "",
   email: "",
   age: 0,
   url: "",
+  phone: "",
 };
 
 export const PrimitiveForm = () => {
@@ -146,6 +137,7 @@ export const PrimitiveForm = () => {
         email: response.data.email,
         age: response.data.age,
         url: response.data.url,
+        phone: response.data.phone,
       });
     } catch (error) {
       console.error("Error:", error);
@@ -153,11 +145,11 @@ export const PrimitiveForm = () => {
   };
 
   return (
-    <div {...stylex.props(styles.text)}>
-      <form onSubmit={handleSubmit} {...stylex.props(styles.flex)}>
-        <div {...stylex.props(styles.form)}>
-          <div {...stylex.props(styles.title)}>Primitive Form</div>
-          <div {...stylex.props(styles.subtitle)}>
+    <div {...stylex.props(formStyles.text)}>
+      <form onSubmit={handleSubmit} {...stylex.props(formStyles.flex)}>
+        <div {...stylex.props(formStyles.form)}>
+          <div {...stylex.props(formStyles.title)}>Primitive Form</div>
+          <div {...stylex.props(formStyles.subtitle)}>
             Only vanilla React with TypeScript
           </div>
 
@@ -217,17 +209,17 @@ export const PrimitiveForm = () => {
             error={error.confirmPassword}
           />
 
-          <div {...stylex.props(styles.terms)}>
-            <label {...stylex.props(styles.termsLabel)} htmlFor="terms">
+          <div {...stylex.props(formStyles.terms)}>
+            <label {...stylex.props(formStyles.termsLabel)} htmlFor="terms">
               <input id="terms" type="checkbox" name="terms" />
               <span>I agree to the terms and conditions</span>
             </label>
             {error.terms && (
-              <div {...stylex.props(styles.error)}>{error.terms}</div>
+              <div {...stylex.props(formStyles.error)}>{error.terms}</div>
             )}
           </div>
 
-          <button type="submit" {...stylex.props(styles.submit)}>
+          <button type="submit" {...stylex.props(formStyles.submit)}>
             Submit
           </button>
         </div>
@@ -239,78 +231,3 @@ export const PrimitiveForm = () => {
     </div>
   );
 };
-
-const styles = stylex.create({
-  text: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    fontWeight: "bold",
-    color: "orange",
-  },
-  flex: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-  },
-  error: {
-    color: "tomato",
-  },
-  form: {
-    backgroundColor: "#15172b",
-    borderRadius: "20px",
-    boxSizing: "border-box",
-    height: "max-content",
-    padding: "20px",
-    width: "320px",
-  },
-  title: {
-    color: "#eee",
-    fontFamily: "sans-serif",
-    fontSize: "36px",
-    fontWeight: 600,
-    marginTop: "30px",
-  },
-  subtitle: {
-    color: "#eee",
-    fontFamily: "sans-serif",
-    fontSize: "16px",
-    fontWeight: 600,
-    marginTop: "10px",
-  },
-
-  submit: {
-    backgroundColor: "#08d",
-    borderRadius: "12px",
-    border: 0,
-    boxSizing: "border-box",
-    color: "#eee",
-    cursor: "pointer",
-    fontSize: "18px",
-    height: "50px",
-    marginTop: "28px",
-    textAlign: "center",
-    width: "100%",
-    transition: "all 0.3s ease-in-out",
-    ":active": {
-      backgroundColor: "#06b",
-    },
-    ":hover": {
-      background: "#03e9f4",
-      color: "#fff",
-      borderRadius: "5px",
-      boxShadow:
-        "0 0 5px #47aeee,0 0 6px #47aeee,0 0 26px #47aeee,0 0 28px #47aeee",
-    },
-  },
-  terms: {
-    textAlign: "left",
-    marginTop: "20px",
-  },
-  termsLabel: {
-    display: "flex",
-    gap: "8px",
-    alignItems: "center",
-    padding: "4px",
-  },
-});
