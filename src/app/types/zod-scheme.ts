@@ -1,59 +1,71 @@
 import { ZodType, z } from "zod";
-import { FormData } from "./types";
+import { checkEmail } from "../api/api";
+import type { FormData } from "./types";
 
 export const UserSchema: ZodType<FormData> = z
   .object({
     name: z
       .string()
+      .min(1, { message: "Name is required" })
       .trim()
       .min(3, { message: "Name must be at least 3 characters long" }),
     email: z.string().min(1, { message: "Email is required" }).email().trim(),
     phone: z
-      .string()
-      // .min(10, { message: "Phone numbers are a minimum of 10 digits" })
-      // .max(14, { message: "Phone numbers are a maximum of 14 digits" })
-      .regex(/^[+0-9]+$/, { message: "Only numbers are allowed" })
-      // .length(10, { message: "Ten numbers are required" })
-      .transform((val) => `+${val}`),
-    age: z
+      .union([
+        z
+          .string()
+          .min(10, { message: "Phone numbers are a minimum of 10 digits" })
+          .max(14, { message: "Phone numbers are a maximum of 14 digits" })
+          // .length(10, { message: "Ten numbers are required" })
+          .regex(/^[+0-9]+$/, { message: "Only numbers are allowed" })
+          .transform((val) => `+${val}`),
+        z.literal(""),
+      ])
+      .optional(),
+    age: z.coerce
       .number({
-        required_error: "required field",
         invalid_type_error: "Age must be a number",
       })
-      .min(18, { message: "Age must be between 18 and 100" })
-      .max(100, { message: "Age must be between 18 and 100" }),
+      .min(1, { message: "Age is required" })
+      .gte(18, { message: "Age must be between 18 and 100" })
+      .lte(100, { message: "Age must be between 18 and 100" }),
     url: z
       .string()
       .min(1, { message: "URL is required" })
       .url()
       .trim()
+      .toLowerCase()
       .includes("google.com", { message: "Invalid Google URL" }),
     password: z
       .string()
       .min(1, { message: "Password is required" })
-      .min(8, { message: "Password is too short" })
-      .max(20, { message: "Password is too long" })
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .max(20, { message: "The password must be a maximum of 20 characters" })
       .superRefine((data, ctx) => {
         validatePassword(data, ctx);
       }),
-    // .regex(passwordValidation, {
-    //   message: "Your password is not valid",
-    // })
     confirmPassword: z.string(),
-    terms: z
-      .boolean({
-        required_error: "required field",
-        invalid_type_error: "You must agree to the terms",
-      })
-      .refine((data) => data === true, {
-        message: "You must agree to the terms",
-        path: ["terms"],
-      }),
+    terms: z.boolean().refine((data) => data === true, {
+      message: "You must agree to the terms",
+      path: ["terms"],
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const EmailDBValidation = z.object({
+  email: z
+    .string()
+    .email("Invalid email address")
+    .refine(async (value) => {
+      // Perform async validation logic (e.g., check if email exists in the database)
+      // Return true if validation passes, false otherwise
+      const isEmailExists = await checkEmail(value);
+      return !isEmailExists;
+    }, "Email already exists"),
+});
 
 function validatePassword(data: string, ctx: z.RefinementCtx) {
   // if (data.length < 8) {
@@ -65,34 +77,34 @@ function validatePassword(data: string, ctx: z.RefinementCtx) {
   //     message: "Password is too short",
   //   });
   // }
-  // if (data.length > 20) {
-  //   ctx.addIssue({
-  //     code: z.ZodIssueCode.too_big,
-  //     maximum: 20,
-  //     type: "string",
-  //     inclusive: true,
-  //     message: "Password is too long",
-  //   });
-  // }
-  if (!/[A-Z]/.test(data)) {
+
+  const isUppercase = !/[A-Z]/.test(data);
+  const isLowercase = !/[a-z]/.test(data);
+  const isNumber = !/\d/.test(data);
+  const isSpecialCharacter = !/[!@#$%^&*(),.?":{}|<>]/.test(data);
+
+  if (isUppercase) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one uppercase letter",
     });
   }
-  if (!/[a-z]/.test(data)) {
+
+  if (isLowercase) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one lowercase letter",
     });
   }
-  if (!/\d/.test(data)) {
+
+  if (isNumber) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one number",
     });
   }
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(data)) {
+
+  if (isSpecialCharacter) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one special character",
@@ -102,59 +114,25 @@ function validatePassword(data: string, ctx: z.RefinementCtx) {
 
 // Inheritance
 const NameAndEmail = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(3, { message: "Name must be at least 3 characters long" }),
-  email: z.string().min(1, { message: "Email is required" }).email().trim(),
+  name: z.string(),
+  email: z.string().email(),
 });
 
 const WithPhone = NameAndEmail.extend({
-  phone: z
-    .string()
-    .min(10, { message: "Phone numbers are a minimum of 10 digits" }),
-  // .regex(/^[0-9]+$/, { message: "Only numbers are allowed" })
-  // .length(10, { message: "Ten numbers are required" })
-  // .transform(val => `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6)}`),
+  phone: z.string(),
 });
 
 const WithAgeAndUrl = WithPhone.extend({
-  age: z
-    .number({
-      required_error: "required field",
-      invalid_type_error: "Age must be a number",
-    })
-    .min(18, { message: "Age must be between 18 and 100" })
-    .max(100, { message: "Age must be between 18 and 100" }),
-  url: z
-    .string()
-    .min(1, { message: "URL is required" })
-    .url()
-    .trim()
-    .includes("google.com", { message: "Invalid Google URL" }),
+  age: z.number(),
+  url: z.string().url(),
 });
 
-export const WithPassword: ZodType<FormData> = WithAgeAndUrl.extend({
-  password: z
-    .string()
-    .min(1, { message: "Password is required" })
-    .min(8, { message: "Password is too short" })
-    .max(20, { message: "Password is too long" })
-    .superRefine((data, ctx) => {
-      validatePassword(data, ctx);
-    }),
-
+export const WithPasswordAndTerms: ZodType<FormData> = WithAgeAndUrl.extend({
+  password: z.string(),
   confirmPassword: z.string(),
-  terms: z
-    .boolean({
-      required_error: "required field",
-      invalid_type_error: "You must agree to the terms",
-    })
-    .refine((data) => data === true, {
-      message: "You must agree to the terms",
-      path: ["terms"],
-    }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
+  terms: z.boolean(),
 });
+
+export const OnlyEmail = NameAndEmail.pick({ email: true });
+export const OnlyName = NameAndEmail.omit({ email: true });
+export const AllOptional = NameAndEmail.partial();

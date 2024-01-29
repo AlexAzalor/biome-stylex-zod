@@ -5,11 +5,11 @@ type Props = {
   email: string;
   age: number;
   url: string;
-  phone: string;
+  phone?: string;
 };
 
 export const UserInfo = ({ name, email, age, url, phone }: Props) => {
-  if (!name || !email || !age || !url || !phone) {
+  if (!name || !email || !age || !url) {
     return null;
   }
 
@@ -19,7 +19,7 @@ export const UserInfo = ({ name, email, age, url, phone }: Props) => {
       <div {...stylex.props(styles.text)}>Email: {email}</div>
       <div {...stylex.props(styles.text)}>Age: {age}</div>
       <div {...stylex.props(styles.text)}>URL: {url}</div>
-      <div {...stylex.props(styles.text)}>Phone: {phone}</div>
+      {phone && <div {...stylex.props(styles.text)}>Phone: {phone}</div>}
     </div>
   );
 };

@@ -7,3 +7,13 @@ export const simulateApiRequest = (data: FormData, delay = 2000) => {
     }, delay);
   });
 };
+
+export const checkEmail = (email: string) => {
+  console.log("checkEmail", email);
+
+  return new Promise<boolean>((resolve) => {
+    setTimeout(() => {
+      resolve(email === "xy55xy.azalor@gmail.com");
+    }, 1000);
+  });
+};

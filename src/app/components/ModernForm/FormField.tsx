@@ -6,7 +6,6 @@ export const FormField: React.FC<FormFieldProps> = ({
   name,
   register,
   error,
-  valueAsNumber,
   labelWidth,
   label,
 }) => (
@@ -16,7 +15,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         autoComplete="new-password"
         type={type}
         {...stylex.props(styles.input)}
-        {...register(name, { valueAsNumber })}
+        {...register(name)}
       />
 
       <div {...stylex.props(styles.cut, styles.labelWidth(labelWidth))} />

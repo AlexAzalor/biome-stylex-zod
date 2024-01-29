@@ -79,7 +79,7 @@ export const ModernForm = () => {
         email: data.email,
         age: data.age,
         url: data.url,
-        phone: data.phone,
+        phone: data.phone || "",
       });
       setLoading(false);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -138,7 +138,6 @@ export const ModernForm = () => {
             name="age"
             register={register}
             error={errors.age}
-            valueAsNumber
             labelWidth={42}
           />
 

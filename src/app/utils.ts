@@ -1,14 +1,10 @@
 export const validateName = (name: string) => {
   if (!name) {
-    return "Name cannot be empty";
+    return "Name is required";
   }
 
-  if (!/^[a-zA-Z\s]+$/.test(name)) {
-    return "Name must contain only alphabetic characters and spaces";
-  }
-
-  if (name.length < 2) {
-    return "Name must be at least 2 characters long";
+  if (name.length < 3) {
+    return "Name must be at least 3 characters long";
   }
 
   if (name.length > 50) {
@@ -20,14 +16,14 @@ export const validateName = (name: string) => {
 
 export const validateEmail = (email: FormDataEntryValue) => {
   if (!email) {
-    return "Email cannot be empty";
+    return "Email is required";
   }
 
   const regexEmal = "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$";
-  const validEmail = !!email?.toString().match(regexEmal);
+  const validEmail = !!email.toString().match(regexEmal);
 
   if (!validEmail) {
-    return "Invalid email format";
+    return "Invalid email";
   }
 
   return "Email is valid";
@@ -35,31 +31,33 @@ export const validateEmail = (email: FormDataEntryValue) => {
 
 export const validatePhone = (phone: string) => {
   if (!phone) {
-    return "Phone cannot be empty";
-  }
-
-  if (!/^\d+$/.test(phone)) {
-    return "Phone must contain only digits";
+    return "";
   }
 
   if (phone.length < 10) {
-    return "Phone must be at least 10 digits long";
+    return "Phone numbers are a minimum of 10 digits";
+  }
+
+  if (!/^\d+$/.test(phone)) {
+    return "Only numbers are allowed";
   }
 
   if (phone.length > 14) {
-    return "Phone must be no more than 15 digits long";
+    return "Phone numbers are a maximum of 14 digits";
   }
 
   return "Phone is valid";
 };
 
 export const validateAge = (age: number) => {
-  if (!age && age !== 0) {
-    return "Age cannot be empty";
+  console.log("age", age);
+
+  if (!age && age === 0) {
+    return "Age is required";
   }
 
   if (!Number.isInteger(age) || age < 0) {
-    return "Age must be a non-negative integer";
+    return "Age must be a number";
   }
 
   if (age < 18 || age > 100) {
@@ -71,13 +69,13 @@ export const validateAge = (age: number) => {
 
 export const validateURL = (url: string) => {
   if (!url) {
-    return "URL cannot be empty";
+    return "URL is required";
   }
 
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 
   if (!urlPattern.test(url)) {
-    return "Invalid URL format";
+    return "Invalid url";
   }
 
   return "URL is valid";
@@ -85,11 +83,11 @@ export const validateURL = (url: string) => {
 
 export const validatePassword = (password: string) => {
   if (!password) {
-    return "Password cannot be empty";
+    return "Password is required";
   }
 
-  if (password.length < 8 || password.length > 20) {
-    return "Password must be between 8 and 20 characters";
+  if (password.length < 8) {
+    return "Password must be at least 8 characters long";
   }
 
   if (!/[A-Z]/.test(password)) {
@@ -106,6 +104,10 @@ export const validatePassword = (password: string) => {
 
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
     return "Password must contain at least one special character";
+  }
+
+  if (password.length > 20) {
+    return "The password must be a maximum of 20 characters";
   }
 
   return "Password is valid";

@@ -15,7 +15,7 @@ export type ApiResponse<T> = {
 export type FormData = {
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   age: number;
   url: string;
   password: string;

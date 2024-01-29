@@ -45,7 +45,7 @@ export const PrimitiveForm = () => {
     type: string,
     message: string,
     approveMessage: string,
-    specialMessage?: string,
+    specialMessage?: string
   ) => {
     if (message === approveMessage) {
       setError((prev) => ({ ...prev, [type]: null }));
@@ -76,8 +76,9 @@ export const PrimitiveForm = () => {
     const validEmail = validateEmail(email);
     const isEmailVerified = handleVerify("email", validEmail, "Email is valid");
 
+    // Phone is optional
     const validPhone = validatePhone(phone);
-    const isPhoneVerified = handleVerify("phone", validPhone, "Phone is valid");
+    handleVerify("phone", validPhone, "Phone is valid");
 
     const validAge = validateAge(Number(age));
     const isAgeVerified = handleVerify("age", validAge, "Age is valid");
@@ -89,27 +90,27 @@ export const PrimitiveForm = () => {
     const isPasswrodVerified = handleVerify(
       "password",
       validPassword,
-      "Password is valid",
+      "Password is valid"
     );
 
     const isPasswordConfirm = handleVerify(
       "confirmPassword",
       confirm,
       password,
-      "Passwords do not match",
+      "Passwords do not match"
     );
 
     const isTermsCheck = handleVerify(
       "terms",
       terms,
       "on",
-      "Please agree to the terms",
+      "You must agree to the terms and conditions"
     );
 
     if (
       isNameVerified ||
       isEmailVerified ||
-      isPhoneVerified ||
+      (validPhone !== "" && validPhone !== "Phone is valid") ||
       isAgeVerified ||
       isURLVerified ||
       isPasswrodVerified ||
@@ -137,7 +138,7 @@ export const PrimitiveForm = () => {
         email: response.data.email,
         age: response.data.age,
         url: response.data.url,
-        phone: response.data.phone,
+        phone: `+${response.data.phone}` || "",
       });
     } catch (error) {
       console.error("Error:", error);
