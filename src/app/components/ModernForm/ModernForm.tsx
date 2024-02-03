@@ -2,14 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import stylex from "@stylexjs/stylex";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { formStyles } from "@/app/styles/form-styles";
-import { FormData, ValidFieldNames } from "@/app/types/types";
+import type { TypeUserSchema, ValidFieldNames } from "@/app/types/types";
 import { UserSchema } from "@/app/types/zod-scheme";
+
 import { defaultUserState } from "../PrimitiveForm/PrimitiveForm";
 import { Spinner } from "../Spinner";
 import { UserInfo } from "../User/UserInfo";
@@ -21,41 +22,43 @@ export const ModernForm = () => {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<FormData>({
+  } = useForm<TypeUserSchema>({
     resolver: zodResolver(UserSchema),
+    // mode: "onSubmit",
+    // reValidateMode: "onSubmit",
+    // delayError: 3000,
+    // shouldFocusError: true,
   });
 
   const [user, setUser] = useState(defaultUserState);
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (data: FormData) => {
-    console.log("SUCCESS", data);
-
+  const onSubmit = async (data: TypeUserSchema) => {
     try {
       setLoading(true);
-      // // Data sent in axios with incorrect data
-      // const response2 = await axios.post("/api/form", {
+      // Data sent to backend with incorrect data
+      // const response = await axios.post<TypeUserSchema, AxiosResponse>("/api/form", {
       //   name: 1234,
       //   email: "Not an email",
-      //   url: "Not a URL",
       //   age: "Hello",
+      //   url: "Not a URL",
       //   password: 1234,
       //   confirmPassword: 12345,
       //   terms: false,
-      // }); // Make a POST request
-      // console.log("response2", response2);
+      // });
 
-      const response = await axios.post("/api/form", data);
-      console.log("response", response);
+      const response = await axios.post<TypeUserSchema, AxiosResponse>(
+        "/api/form",
+        data,
+      );
 
       const { errors = {} } = response.data;
-
       // Define a mapping between server-side field names and their corresponding client-side names
       const fieldErrorMapping: Record<string, ValidFieldNames> = {
         name: "name",
         email: "email",
-        url: "url",
         age: "age",
+        url: "url",
         password: "password",
         confirmPassword: "confirmPassword",
         terms: "terms",
@@ -66,7 +69,6 @@ export const ModernForm = () => {
         (field) => errors[field],
       );
 
-      // If a field with an error is found, update the form error state using setError
       if (fieldWithError) {
         // Use the ValidFieldNames type to ensure the correct field names
         setError(fieldErrorMapping[fieldWithError], {
@@ -150,7 +152,6 @@ export const ModernForm = () => {
             labelWidth={94}
           />
 
-          {/* no copy */}
           <FormField
             type="password"
             label="Password"

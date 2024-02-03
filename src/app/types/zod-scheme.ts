@@ -1,8 +1,8 @@
 import { ZodType, z } from "zod";
 import { checkEmail } from "../api/api";
-import type { FormData } from "./types";
+import type { TypeUserSchema } from "./types";
 
-export const UserSchema: ZodType<FormData> = z
+export const UserSchema = z
   .object({
     name: z
       .string()
@@ -44,7 +44,7 @@ export const UserSchema: ZodType<FormData> = z
       .superRefine((data, ctx) => {
         validatePassword(data, ctx);
       }),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().optional(),
     terms: z.boolean().refine((data) => data === true, {
       message: "You must agree to the terms",
       path: ["terms"],
@@ -61,7 +61,6 @@ export const EmailDBValidation = z.object({
     .email("Invalid email address")
     .refine(async (value) => {
       // Perform async validation logic (e.g., check if email exists in the database)
-      // Return true if validation passes, false otherwise
       const isEmailExists = await checkEmail(value);
       return !isEmailExists;
     }, "Email already exists"),
@@ -119,7 +118,7 @@ const NameAndEmail = z.object({
 });
 
 const WithPhone = NameAndEmail.extend({
-  phone: z.string(),
+  phone: z.string().optional(),
 });
 
 const WithAgeAndUrl = WithPhone.extend({
@@ -127,11 +126,12 @@ const WithAgeAndUrl = WithPhone.extend({
   url: z.string().url(),
 });
 
-export const WithPasswordAndTerms: ZodType<FormData> = WithAgeAndUrl.extend({
-  password: z.string(),
-  confirmPassword: z.string(),
-  terms: z.boolean(),
-});
+export const WithPasswordAndTerms: ZodType<TypeUserSchema> =
+  WithAgeAndUrl.extend({
+    password: z.string(),
+    confirmPassword: z.string(),
+    terms: z.boolean(),
+  });
 
 export const OnlyEmail = NameAndEmail.pick({ email: true });
 export const OnlyName = NameAndEmail.omit({ email: true });

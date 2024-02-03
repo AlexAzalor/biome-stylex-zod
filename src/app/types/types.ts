@@ -1,4 +1,8 @@
 import { FieldError, UseFormRegister } from "react-hook-form";
+import { z } from "zod";
+import { UserSchema } from "./zod-scheme";
+
+export type TypeUserSchema = z.infer<typeof UserSchema>;
 
 export type User = {
   name: string;
@@ -12,23 +16,11 @@ export type ApiResponse<T> = {
   data: T;
 };
 
-export type FormData = {
-  name: string;
-  email: string;
-  phone?: string;
-  age: number;
-  url: string;
-  password: string;
-  confirmPassword?: string;
-  terms: boolean;
-};
-
 export type FormFieldProps = {
   type: string;
   name: ValidFieldNames;
-  register: UseFormRegister<FormData>;
+  register: UseFormRegister<TypeUserSchema>;
   error: FieldError | undefined;
-  valueAsNumber?: boolean;
   labelWidth?: number;
   label: string;
 };

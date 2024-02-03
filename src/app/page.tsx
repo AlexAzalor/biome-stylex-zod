@@ -22,7 +22,6 @@ const styles = stylex.create({
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(min(650px, 100%), 1fr))",
     gridAutoRows: "minmax(auto, auto)",
-    // gridTemplateColumns: "1fr 1fr",
     alignItems: "baseline",
     placeItems: "center",
     gap: "20px",

@@ -1,4 +1,4 @@
-import { FormFieldProps } from "@/app/types/types";
+import type { FormFieldProps } from "@/app/types/types";
 import stylex from "@stylexjs/stylex";
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -38,9 +38,6 @@ const styles = stylex.create({
     height: "50px",
     position: "relative",
     width: "100%",
-  },
-  ic1: {
-    marginTop: "40px",
   },
   ic2: {
     marginTop: "30px",

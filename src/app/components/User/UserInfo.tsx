@@ -45,5 +45,7 @@ const styles = stylex.create({
   text: {
     fontSize: "1.6em",
     color: "#446",
+    textAlign: "left",
+    wordBreak: "break-all",
   },
 });

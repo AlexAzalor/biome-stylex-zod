@@ -1,7 +1,7 @@
-import type { ApiResponse, FormData } from "../types/types";
+import type { ApiResponse, TypeUserSchema } from "../types/types";
 
-export const simulateApiRequest = (data: FormData, delay = 2000) => {
-  return new Promise<ApiResponse<FormData>>((resolve) => {
+export const simulateApiRequest = (data: TypeUserSchema, delay = 2000) => {
+  return new Promise<ApiResponse<TypeUserSchema>>((resolve) => {
     setTimeout(() => {
       resolve({ data });
     }, delay);
@@ -9,11 +9,9 @@ export const simulateApiRequest = (data: FormData, delay = 2000) => {
 };
 
 export const checkEmail = (email: string) => {
-  console.log("checkEmail", email);
-
   return new Promise<boolean>((resolve) => {
     setTimeout(() => {
-      resolve(email === "xy55xy.azalor@gmail.com");
+      resolve(email === "exists@email.com");
     }, 1000);
   });
 };
