@@ -1,26 +1,52 @@
 "use client";
 
+import { EyeIcon, EyeSlashIcon } from "@/app/icons";
+import { ValidFieldNames } from "@/app/types/types";
 import stylex from "@stylexjs/stylex";
+import { useState } from "react";
 
 type Props = {
   label: string;
-  code: string;
+  code: ValidFieldNames;
   type: string;
   labelWidth: number;
   error: string | null;
+  icon?: JSX.Element;
 };
 
+const passwordInputs = ["password", "confirmPassword"];
+
 export const FormInput = ({ label, code, type, labelWidth, error }: Props) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const isPasswordInput = passwordInputs.includes(code);
+  const inputType = isPasswordInput && showPassword ? "text" : type;
+  const inputIcon = showPassword ? <EyeSlashIcon /> : <EyeIcon />;
+
   return (
     <>
       <div {...stylex.props(styles["input-container"], styles.ic2)}>
         <input
           id={code}
           {...stylex.props(styles.input)}
-          type={type}
+          type={inputType}
           name={code}
+          autoComplete="new-password"
         />
+
+        {isPasswordInput && (
+          <i onClick={handleShowPassword} {...stylex.props(eye.eye)}>
+            {" "}
+            {inputIcon}
+          </i>
+        )}
+
         <div {...stylex.props(styles.cut, styles.labelWidth(labelWidth))} />
+
         <label htmlFor={code} {...stylex.props(styles.placeholder)}>
           {label}
         </label>
@@ -30,6 +56,15 @@ export const FormInput = ({ label, code, type, labelWidth, error }: Props) => {
     </>
   );
 };
+
+const eye = stylex.create({
+  eye: {
+    position: "absolute",
+    top: "36%",
+    right: "4%",
+    cursor: "pointer",
+  },
+});
 
 const styles = stylex.create({
   labelWidth: (width) => ({

@@ -1,31 +1,65 @@
+"use client";
+
+import { EyeIcon, EyeSlashIcon } from "@/app/icons";
 import type { FormFieldProps } from "@/app/types/types";
 import stylex from "@stylexjs/stylex";
+import { useState } from "react";
 
-export const FormField: React.FC<FormFieldProps> = ({
+const passwordInputs = ["password", "confirmPassword"];
+
+export const FormField = ({
   type,
   name,
   register,
   error,
   labelWidth,
   label,
-}) => (
-  <>
-    <div {...stylex.props(styles["input-container"], styles.ic2)}>
-      <input
-        autoComplete="new-password"
-        type={type}
-        {...stylex.props(styles.input)}
-        {...register(name)}
-      />
+}: FormFieldProps) => {
+  const [showPassword, setShowPassword] = useState(false);
 
-      <div {...stylex.props(styles.cut, styles.labelWidth(labelWidth))} />
+  const handleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
-      <label {...stylex.props(styles.placeholder)}>{label}</label>
-    </div>
+  const isPasswordInput = passwordInputs.includes(name);
+  const inputType = isPasswordInput && showPassword ? "text" : type;
+  const inputIcon = showPassword ? <EyeSlashIcon /> : <EyeIcon />;
 
-    {error && <span {...stylex.props(styles.error)}>{error.message}</span>}
-  </>
-);
+  return (
+    <>
+      <div {...stylex.props(styles["input-container"], styles.ic2)}>
+        <input
+          autoComplete="new-password"
+          type={inputType}
+          {...stylex.props(styles.input)}
+          {...register(name)}
+        />
+
+        {isPasswordInput && (
+          <i onClick={handleShowPassword} {...stylex.props(eye.eye)}>
+            {" "}
+            {inputIcon}
+          </i>
+        )}
+
+        <div {...stylex.props(styles.cut, styles.labelWidth(labelWidth))} />
+
+        <label {...stylex.props(styles.placeholder)}>{label}</label>
+      </div>
+
+      {error && <span {...stylex.props(styles.error)}>{error.message}</span>}
+    </>
+  );
+};
+
+const eye = stylex.create({
+  eye: {
+    position: "absolute",
+    top: "36%",
+    right: "4%",
+    cursor: "pointer",
+  },
+});
 
 const styles = stylex.create({
   labelWidth: (width) => ({

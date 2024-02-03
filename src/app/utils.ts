@@ -14,7 +14,7 @@ export const validateName = (name: string) => {
   return "Name is valid";
 };
 
-export const validateEmail = (email: FormDataEntryValue) => {
+export const validateEmail = (email: string) => {
   if (!email) {
     return "Email is required";
   }
@@ -76,6 +76,10 @@ export const validateURL = (url: string) => {
 
   if (!urlPattern.test(url)) {
     return "Invalid url";
+  }
+
+  if (!url.includes("google.com")) {
+    return "Invalid Google URL";
   }
 
   return "URL is valid";

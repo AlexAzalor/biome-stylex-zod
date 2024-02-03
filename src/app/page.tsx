@@ -8,7 +8,6 @@ import { PrimitiveForm } from "./components/PrimitiveForm/PrimitiveForm";
 export default function Home() {
   return (
     <main>
-      <h1 {...stylex.props(styles.title)}>Hello Simple2B</h1>
       <div {...stylex.props(styles.main)}>
         <PrimitiveForm />
         <ModernForm />

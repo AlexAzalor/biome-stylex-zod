@@ -45,7 +45,7 @@ export const PrimitiveForm = () => {
     type: string,
     message: string,
     approveMessage: string,
-    specialMessage?: string
+    specialMessage?: string,
   ) => {
     if (message === approveMessage) {
       setError((prev) => ({ ...prev, [type]: null }));
@@ -67,7 +67,7 @@ export const PrimitiveForm = () => {
     const age = (data.get("age") as string).trim();
     const url = (data.get("url") as string).trim();
     const password = (data.get("password") as string).trim();
-    const confirm = (data.get("confirm") as string).trim();
+    const confirmPassword = (data.get("confirmPassword") as string).trim();
     const terms = data.get("terms") as string;
 
     const validName = validateName(name);
@@ -90,21 +90,21 @@ export const PrimitiveForm = () => {
     const isPasswrodVerified = handleVerify(
       "password",
       validPassword,
-      "Password is valid"
+      "Password is valid",
     );
 
     const isPasswordConfirm = handleVerify(
       "confirmPassword",
-      confirm,
+      confirmPassword,
       password,
-      "Passwords do not match"
+      "Passwords do not match",
     );
 
     const isTermsCheck = handleVerify(
       "terms",
       terms,
       "on",
-      "You must agree to the terms and conditions"
+      "You must agree to the terms and conditions",
     );
 
     if (
@@ -197,15 +197,15 @@ export const PrimitiveForm = () => {
           <FormInput
             label="Password"
             code="password"
-            type="text"
+            type="password"
             labelWidth={76}
             error={error.password}
           />
 
           <FormInput
             label="Confirm password"
-            code="confirm"
-            type="text"
+            code="confirmPassword"
+            type="password"
             labelWidth={124}
             error={error.confirmPassword}
           />
