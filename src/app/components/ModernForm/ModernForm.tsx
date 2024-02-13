@@ -4,13 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import stylex from "@stylexjs/stylex";
 import axios, { AxiosResponse } from "axios";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { formStyles } from "@/app/styles/form-styles";
-import type { TypeUserSchema, ValidFieldNames } from "@/app/types/types";
+import type { TypeUserSchema } from "@/app/types/types";
 import { UserSchema } from "@/app/types/zod-scheme";
 
+import { handleResponseError } from "@/app/utils";
 import { defaultUserState } from "../PrimitiveForm/PrimitiveForm";
 import { Spinner } from "../Spinner";
 import { UserInfo } from "../User/UserInfo";
@@ -24,7 +25,6 @@ export const ModernForm = () => {
     setError,
   } = useForm<TypeUserSchema>({
     resolver: zodResolver(UserSchema),
-    // mode: "onSubmit",
     // reValidateMode: "onSubmit",
     // delayError: 3000,
     // shouldFocusError: true,
@@ -36,46 +36,25 @@ export const ModernForm = () => {
   const onSubmit = async (data: TypeUserSchema) => {
     try {
       setLoading(true);
-      // Data sent to backend with incorrect data
-      // const response = await axios.post<TypeUserSchema, AxiosResponse>("/api/form", {
-      //   name: 1234,
-      //   email: "Not an email",
-      //   age: "Hello",
-      //   url: "Not a URL",
-      //   password: 1234,
-      //   confirmPassword: 12345,
-      //   terms: false,
-      // });
 
       const response = await axios.post<TypeUserSchema, AxiosResponse>(
         "/api/form",
         data,
       );
 
-      const { errors = {} } = response.data;
-      // Define a mapping between server-side field names and their corresponding client-side names
-      const fieldErrorMapping: Record<string, ValidFieldNames> = {
-        name: "name",
-        email: "email",
-        age: "age",
-        url: "url",
-        password: "password",
-        confirmPassword: "confirmPassword",
-        terms: "terms",
-      };
-
-      // Find the first field with an error in the response data
-      const fieldWithError = Object.keys(fieldErrorMapping).find(
-        (field) => errors[field],
-      );
+      const { errors, fieldErrorMapping, fieldWithError } =
+        handleResponseError(response);
 
       if (fieldWithError) {
-        // Use the ValidFieldNames type to ensure the correct field names
         setError(fieldErrorMapping[fieldWithError], {
           type: "server",
           message: errors[fieldWithError],
         });
+
+        setLoading(false);
+        return;
       }
+
       setUser({
         name: data.name,
         email: data.email,

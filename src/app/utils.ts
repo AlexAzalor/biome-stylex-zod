@@ -1,3 +1,6 @@
+import { AxiosResponse } from "axios";
+import type { ValidFieldNames } from "./types/types";
+
 export const validateName = (name: string) => {
   if (!name) {
     return "Name is required";
@@ -50,8 +53,6 @@ export const validatePhone = (phone: string) => {
 };
 
 export const validateAge = (age: number) => {
-  console.log("age", age);
-
   if (!age && age === 0) {
     return "Age is required";
   }
@@ -115,4 +116,25 @@ export const validatePassword = (password: string) => {
   }
 
   return "Password is valid";
+};
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export const handleResponseError = (response: AxiosResponse<any, any>) => {
+  const { errors = {} } = response.data;
+
+  const fieldErrorMapping: Record<string, ValidFieldNames> = {
+    name: "name",
+    email: "email",
+    age: "age",
+    url: "url",
+    password: "password",
+    confirmPassword: "confirmPassword",
+    terms: "terms",
+  };
+
+  const fieldWithError = Object.keys(fieldErrorMapping).find(
+    (field) => errors[field],
+  );
+
+  return { errors, fieldErrorMapping, fieldWithError };
 };

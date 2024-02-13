@@ -5,11 +5,23 @@ import { simulateApiRequest } from "../api";
 
 export async function POST(request: Request) {
   const body: TypeUserSchema = await request.json();
+  // const badData = {
+  //   name: 1234,
+  //   email: "Not an email",
+  //   age: "Hello",
+  //   url: "Not a URL",
+  //   password: 1234,
+  //   confirmPassword: 12345,
+  //   terms: false,
+  // };
 
   const result = UserSchema.safeParse(body);
 
   if (result.success) {
-    await simulateApiRequest(body);
+    // delete body.confirmPassword;
+    const { confirmPassword, ...formDataWithoutConfirmPassword } = body;
+
+    await simulateApiRequest(formDataWithoutConfirmPassword);
 
     return NextResponse.json({ status: 200 });
   }

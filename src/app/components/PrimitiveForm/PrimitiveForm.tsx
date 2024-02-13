@@ -138,7 +138,7 @@ export const PrimitiveForm = () => {
         email: response.data.email,
         age: response.data.age,
         url: response.data.url,
-        phone: `+${response.data.phone}` || "",
+        phone: response.data.phone ? `+${response.data.phone}` : "",
       });
     } catch (error) {
       console.error("Error:", error);
