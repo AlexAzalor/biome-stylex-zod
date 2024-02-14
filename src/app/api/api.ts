@@ -1,8 +1,12 @@
 import type { ApiResponse, TypeUserSchema } from "../types/types";
 
-export const simulateApiRequest = (data: TypeUserSchema, delay = 2000) => {
-  return new Promise<ApiResponse<TypeUserSchema>>((resolve) => {
+type UserData = Omit<TypeUserSchema, "confirmPassword">;
+
+export const simulateApiRequest = (data: UserData, delay = 2000) => {
+  return new Promise<ApiResponse<UserData>>((resolve) => {
     setTimeout(() => {
+      // biome-ignore lint/performance/noDelete: <explanation>
+      delete (data as Partial<UserData>).password;
       resolve({ data });
     }, delay);
   });

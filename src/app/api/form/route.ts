@@ -18,12 +18,12 @@ export async function POST(request: Request) {
   const result = UserSchema.safeParse(body);
 
   if (result.success) {
-    // delete body.confirmPassword;
-    const { confirmPassword, ...formDataWithoutConfirmPassword } = body;
+    // biome-ignore lint/performance/noDelete: <explanation>
+    delete body.confirmPassword;
 
-    await simulateApiRequest(formDataWithoutConfirmPassword);
+    const response = await simulateApiRequest(body);
 
-    return NextResponse.json({ status: 200 });
+    return NextResponse.json({ ...response, status: 200 });
   }
 
   const serverErrors = Object.fromEntries(

@@ -1,4 +1,5 @@
 import stylex from "@stylexjs/stylex";
+import { memo } from "react";
 
 type Props = {
   name: string;
@@ -8,7 +9,7 @@ type Props = {
   phone?: string;
 };
 
-export const UserInfo = ({ name, email, age, url, phone }: Props) => {
+export const UserInfo = memo(({ name, email, age, url, phone }: Props) => {
   if (!name || !email || !age || !url) {
     return null;
   }
@@ -22,7 +23,7 @@ export const UserInfo = ({ name, email, age, url, phone }: Props) => {
       {phone && <div {...stylex.props(styles.text)}>Phone: {phone}</div>}
     </div>
   );
-};
+});
 
 const styles = stylex.create({
   card: {

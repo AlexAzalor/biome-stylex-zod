@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { FieldError, UseFormRegister } from "react-hook-form";
 import { z } from "zod";
 import { UserSchema } from "./zod-scheme";
@@ -43,5 +44,15 @@ export type FormError = {
   url: string | null;
   password: string | null;
   confirmPassword: string | null;
-  terms: boolean;
+  terms: string | null;
 };
+
+export type UserFormResponse = {
+  data: Omit<TypeUserSchema, "password" | "confirmPassword">;
+  status: number;
+  errors: {
+    [k: string]: string;
+  };
+};
+
+export type FormRequest = AxiosResponse<UserFormResponse>;

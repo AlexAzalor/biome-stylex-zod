@@ -77,33 +77,33 @@ function validatePassword(data: string, ctx: z.RefinementCtx) {
   //   });
   // }
 
-  const isUppercase = !/[A-Z]/.test(data);
-  const isLowercase = !/[a-z]/.test(data);
-  const isNumber = !/\d/.test(data);
-  const isSpecialCharacter = !/[!@#$%^&*(),.?":{}|<>]/.test(data);
+  const isUppercase = /[A-Z]/.test(data);
+  const isLowercase = /[a-z]/.test(data);
+  const isNumber = /\d/.test(data);
+  const isSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(data);
 
-  if (isUppercase) {
+  if (!isUppercase) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one uppercase letter",
     });
   }
 
-  if (isLowercase) {
+  if (!isLowercase) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one lowercase letter",
     });
   }
 
-  if (isNumber) {
+  if (!isNumber) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one number",
     });
   }
 
-  if (isSpecialCharacter) {
+  if (!isSpecialCharacter) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Password must contain at least one special character",

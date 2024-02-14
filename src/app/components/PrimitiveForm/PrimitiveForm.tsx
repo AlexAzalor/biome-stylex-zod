@@ -15,6 +15,7 @@ import {
 } from "../../utils";
 import { Spinner } from "../Spinner";
 import { UserInfo } from "../User/UserInfo";
+import { FormCheckbox } from "./FormCheckbox";
 import { FormInput } from "./FormInput";
 
 const defaultErrorState: FormError = {
@@ -25,7 +26,7 @@ const defaultErrorState: FormError = {
   url: null,
   password: null,
   confirmPassword: null,
-  terms: false,
+  terms: null,
 };
 
 export const defaultUserState: User = {
@@ -132,16 +133,28 @@ export const PrimitiveForm = () => {
         terms: !!terms,
       });
 
-      setLoading(false);
+      const {
+        name: userName,
+        email: userEmail,
+        age: userAge,
+        url: userUrl,
+        phone: userPhone,
+      } = response.data;
+
       setUser({
-        name: response.data.name,
-        email: response.data.email,
-        age: response.data.age,
-        url: response.data.url,
-        phone: response.data.phone ? `+${response.data.phone}` : "",
+        name: userName,
+        email: userEmail,
+        age: userAge,
+        url: userUrl,
+        phone: userPhone ? `+${userPhone}` : "",
       });
+
+      setLoading(false);
     } catch (error) {
-      console.error("Error:", error);
+      setLoading(false);
+
+      console.error("Error: ", error);
+      alert("Failed to submit Primitive Form.");
     }
   };
 
@@ -210,15 +223,7 @@ export const PrimitiveForm = () => {
             error={error.confirmPassword}
           />
 
-          <div {...stylex.props(formStyles.terms)}>
-            <label {...stylex.props(formStyles.termsLabel)} htmlFor="terms">
-              <input id="terms" type="checkbox" name="terms" />
-              <span>I agree to the terms and conditions</span>
-            </label>
-            {error.terms && (
-              <div {...stylex.props(formStyles.error)}>{error.terms}</div>
-            )}
-          </div>
+          <FormCheckbox error={error.terms} />
 
           <button type="submit" {...stylex.props(formStyles.submit)}>
             Submit

@@ -2,26 +2,27 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import stylex from "@stylexjs/stylex";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { formStyles } from "@/app/styles/form-styles";
-import type { TypeUserSchema } from "@/app/types/types";
+import type { FormRequest, TypeUserSchema } from "@/app/types/types";
 import { UserSchema } from "@/app/types/zod-scheme";
 
 import { handleResponseError } from "@/app/utils";
 import { defaultUserState } from "../PrimitiveForm/PrimitiveForm";
 import { Spinner } from "../Spinner";
 import { UserInfo } from "../User/UserInfo";
+import { CheckboxField } from "./CheckboxField";
 import { FormField } from "./FormField";
 
 export const ModernForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setError,
   } = useForm<TypeUserSchema>({
     resolver: zodResolver(UserSchema),
@@ -31,13 +32,10 @@ export const ModernForm = () => {
   });
 
   const [user, setUser] = useState(defaultUserState);
-  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: TypeUserSchema) => {
     try {
-      setLoading(true);
-
-      const response = await axios.post<TypeUserSchema, AxiosResponse>(
+      const response = await axios.post<TypeUserSchema, FormRequest>(
         "/api/form",
         data,
       );
@@ -51,31 +49,29 @@ export const ModernForm = () => {
           message: errors[fieldWithError],
         });
 
-        setLoading(false);
         return;
       }
 
+      const { name, email, age, url, phone } = response.data.data;
       setUser({
-        name: data.name,
-        email: data.email,
-        age: data.age,
-        url: data.url,
-        phone: data.phone || "",
+        name,
+        email,
+        age,
+        url,
+        phone: phone || "",
       });
-      setLoading(false);
+
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
-      setLoading(false);
-      console.log("error", error);
-
-      alert("Submitting form failed!");
+      console.error("Error: ", error);
+      alert("Failed to submit Modern Form.");
     }
   };
 
   return (
     <div {...stylex.props(formStyles.text)}>
       <UserInfo {...user} />
-      {loading && <Spinner />}
+      {isSubmitting && <Spinner />}
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -149,20 +145,7 @@ export const ModernForm = () => {
             labelWidth={124}
           />
 
-          <div {...stylex.props(formStyles.terms)}>
-            <label {...stylex.props(formStyles.termsLabel)}>
-              <input
-                type="checkbox"
-                {...register("terms", { required: true })}
-              />
-              I agree to the terms and conditions
-            </label>
-            {errors.terms && (
-              <div {...stylex.props(formStyles.error)}>
-                You must agree to the terms and conditions
-              </div>
-            )}
-          </div>
+          <CheckboxField register={register} error={errors.terms} />
 
           <button type="submit" {...stylex.props(formStyles.submit)}>
             Submit

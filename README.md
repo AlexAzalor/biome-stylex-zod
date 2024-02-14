@@ -3,7 +3,7 @@ yarn add @babel/runtime -D
 yarn add --dev --exact @biomejs/biome
 yarn add @stylexjs/nextjs-plugin -D
 
-biome.json <---------- after -> RELOAD VC Code
+biome.json <---------- then -> RELOAD VC Code
 .babelrc.js
 next.config.js <----- !!! .js !!!
 
