@@ -26,6 +26,7 @@ export const ModernForm = () => {
     setError,
   } = useForm<TypeUserSchema>({
     resolver: zodResolver(UserSchema),
+    mode: "all",
     // reValidateMode: "onSubmit",
     // delayError: 3000,
     // shouldFocusError: true,
