@@ -1,13 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import stylex from "@stylexjs/stylex";
 import axios from "axios";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { formStyles } from "@/app/styles/form-styles";
 import type { FormRequest, TypeUserSchema } from "@/app/types/types";
 import { UserSchema } from "@/app/types/zod-scheme";
 
@@ -52,7 +50,7 @@ export const ModernForm = () => {
 
         return;
       }
-
+      console.log(response);
       const { name, email, age, url, phone } = response.data.data;
       setUser({
         name,
@@ -70,19 +68,14 @@ export const ModernForm = () => {
   };
 
   return (
-    <div {...stylex.props(formStyles.text)}>
+    <div>
       <UserInfo {...user} />
       {isSubmitting && <Spinner />}
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        {...stylex.props(formStyles.flex)}
-      >
-        <div {...stylex.props(formStyles.form)}>
-          <div {...stylex.props(formStyles.title)}>Modern Form</div>
-          <div {...stylex.props(formStyles.subtitle)}>
-            Zod + React Hook Form
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <div>Modern Form</div>
+          <div>Zod + React Hook Form</div>
 
           <FormField
             type="text"
@@ -148,9 +141,7 @@ export const ModernForm = () => {
 
           <CheckboxField register={register} error={errors.terms} />
 
-          <button type="submit" {...stylex.props(formStyles.submit)}>
-            Submit
-          </button>
+          <button type="submit">Submit</button>
         </div>
       </form>
     </div>

@@ -1,9 +1,7 @@
 "use client";
 
-import stylex from "@stylexjs/stylex";
 import { useState } from "react";
 import { simulateApiRequest } from "../../api/api";
-import { formStyles } from "../../styles/form-styles";
 import type { FormError, User } from "../../types/types";
 import {
   validateAge,
@@ -159,13 +157,11 @@ export const PrimitiveForm = () => {
   };
 
   return (
-    <div {...stylex.props(formStyles.text)}>
-      <form onSubmit={handleSubmit} {...stylex.props(formStyles.flex)}>
-        <div {...stylex.props(formStyles.form)}>
-          <div {...stylex.props(formStyles.title)}>Primitive Form</div>
-          <div {...stylex.props(formStyles.subtitle)}>
-            Only vanilla React with TypeScript
-          </div>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <div>Primitive Form</div>
+          <div>Only vanilla React with TypeScript</div>
 
           <FormInput
             label="Name"
@@ -225,9 +221,7 @@ export const PrimitiveForm = () => {
 
           <FormCheckbox error={error.terms} />
 
-          <button type="submit" {...stylex.props(formStyles.submit)}>
-            Submit
-          </button>
+          <button type="submit">Submit</button>
         </div>
       </form>
 
