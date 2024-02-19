@@ -11,7 +11,7 @@ export const CheckboxField = ({ error, register }: Props) => {
       </label>
 
       {error && (
-        <div className="text-[tomato] text-sm">
+        <div className="text-textRedLight text-sm">
           You must agree to the terms and conditions
         </div>
       )}

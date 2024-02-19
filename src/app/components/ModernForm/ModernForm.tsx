@@ -68,14 +68,16 @@ export const ModernForm = () => {
   };
 
   return (
-    <div className="flex items-center gap-3 font-bold text-[orange]">
+    <div className="flex items-center gap-3 font-bold text-textOrange">
       <UserInfo {...user} />
       {isSubmitting && <Spinner />}
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-        <div className="bg-[#15172b] rounded-[20px] box-border h-max p-5 w-[320px]">
-          <div className="text-[#eee] text-4xl font-semibold">Modern Form</div>
-          <div className="text-[#eee] text-base font-semibold pt-2">
+        <div className="bg-primary rounded-[20px] box-border h-max p-5 w-[320px]">
+          <div className="text-whiteText text-4xl font-semibold">
+            Modern Form
+          </div>
+          <div className="text-whiteText text-base font-semibold pt-2">
             Zod + React Hook Form
           </div>
 
@@ -145,7 +147,7 @@ export const ModernForm = () => {
 
           <button
             type="submit"
-            className="bg-[#08d] rounded-xl border-0 text-[#eee] cursor-pointer text-lg h-12 mt-7 text-center w-full transition-all duration-200 active:bg-[#06b] hover:bg-[#03e9f4] hover:text-white hover:rounded-md
+            className="bg-buttonBg rounded-xl border-0 text-whiteText cursor-pointer text-lg h-12 mt-7 text-center w-full transition-all duration-200 active:bg-buttonBgDark hover:bg-buttonBgHover hover:text-white hover:rounded-md
           hover:shadow-buttonShadow"
           >
             Submit

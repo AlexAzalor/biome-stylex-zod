@@ -10,7 +10,7 @@ export const FormCheckbox = ({ error }: Props) => {
         <span>I agree to the terms and conditions</span>
       </label>
 
-      {error && <div className="text-[tomato] text-sm">{error}</div>}
+      {error && <div className="text-textRedLight text-sm">{error}</div>}
     </div>
   );
 };
