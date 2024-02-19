@@ -157,11 +157,15 @@ export const PrimitiveForm = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <div>Primitive Form</div>
-          <div>Only vanilla React with TypeScript</div>
+    <div className="flex items-center gap-3 font-bold text-[orange]">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <div className="bg-[#15172b] rounded-[20px] box-border h-max p-5 w-[320px]">
+          <div className="text-[#eee] text-4xl font-semibold">
+            Primitive Form
+          </div>
+          <div className="text-[#eee] text-base font-semibold pt-2">
+            Only vanilla React with TypeScript
+          </div>
 
           <FormInput
             label="Name"
@@ -221,7 +225,13 @@ export const PrimitiveForm = () => {
 
           <FormCheckbox error={error.terms} />
 
-          <button type="submit">Submit</button>
+          <button
+            type="submit"
+            className="bg-[#08d] rounded-xl border-0 text-[#eee] cursor-pointer text-lg h-12 mt-7 text-center w-full transition-all active:bg-[#06b] hover:bg-[#03e9f4] hover:text-white hover:rounded-md
+          hover:shadow-buttonShadow"
+          >
+            Submit
+          </button>
         </div>
       </form>
 

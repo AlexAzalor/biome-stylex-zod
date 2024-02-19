@@ -8,44 +8,24 @@ type Props = {
   phone?: string;
 };
 
+const textStyle = "text-2xl text-[#6e58a5] text-left break-all";
+
 export const UserInfo = memo(({ name, email, age, url, phone }: Props) => {
   if (!name || !email || !age || !url) {
     return null;
   }
 
   return (
-    <div>
-      <div>Name: {name}</div>
-      <div>Email: {email}</div>
-      <div>Age: {age}</div>
-      <div>URL: {url}</div>
-      {phone && <div>Phone: {phone}</div>}
+    <div
+      className="min-h-[200px] flex flex-col justify-between items-start max-w-max p-5
+    border-[1px] border-[rgba(255,255,255,.25)] border-solid rounded-[20px] bg-[rgba(255, 255, 255, 0.40)]
+    backdrop-blur-[12px] shadow-cardShadow"
+    >
+      <div className={textStyle}>Name: {name}</div>
+      <div className={textStyle}>Email: {email}</div>
+      <div className={textStyle}>Age: {age}</div>
+      <div className={textStyle}>URL: {url}</div>
+      {phone && <div className={textStyle}>Phone: {phone}</div>}
     </div>
   );
 });
-
-// const styles = ({
-//   card: {
-//     minHeight: "200px",
-//     display: "flex",
-//     flexDirection: "column",
-//     justifyContent: "space-between",
-//     alignItems: "flex-start",
-
-//     maxWidth: "max-content",
-//     padding: "20px",
-
-//     border: "1px solid rgba(255, 255, 255, .25)",
-//     borderRadius: "20px",
-//     backgroundColor: "rgba(255, 255, 255, 0.40)",
-//     boxShadow: "0 0 10px 1px rgba(0, 0, 0, 0.25)",
-
-//     backdropFilter: "blur(12px)",
-//   },
-//   text: {
-//     fontSize: "1.6em",
-//     color: "#446",
-//     textAlign: "left",
-//     wordBreak: "break-all",
-//   },
-// });

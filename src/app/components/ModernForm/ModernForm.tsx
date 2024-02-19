@@ -24,7 +24,7 @@ export const ModernForm = () => {
     setError,
   } = useForm<TypeUserSchema>({
     resolver: zodResolver(UserSchema),
-    mode: "all",
+    // mode: "all",
     // reValidateMode: "onSubmit",
     // delayError: 3000,
     // shouldFocusError: true,
@@ -50,7 +50,7 @@ export const ModernForm = () => {
 
         return;
       }
-      console.log(response);
+
       const { name, email, age, url, phone } = response.data.data;
       setUser({
         name,
@@ -68,14 +68,16 @@ export const ModernForm = () => {
   };
 
   return (
-    <div>
+    <div className="flex items-center gap-3 font-bold text-[orange]">
       <UserInfo {...user} />
       {isSubmitting && <Spinner />}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <div>Modern Form</div>
-          <div>Zod + React Hook Form</div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <div className="bg-[#15172b] rounded-[20px] box-border h-max p-5 w-[320px]">
+          <div className="text-[#eee] text-4xl font-semibold">Modern Form</div>
+          <div className="text-[#eee] text-base font-semibold pt-2">
+            Zod + React Hook Form
+          </div>
 
           <FormField
             type="text"
@@ -100,7 +102,7 @@ export const ModernForm = () => {
             name="phone"
             register={register}
             error={errors.phone}
-            labelWidth={54}
+            labelWidth={56}
           />
 
           <FormField
@@ -136,12 +138,18 @@ export const ModernForm = () => {
             name="confirmPassword"
             register={register}
             error={errors.confirmPassword}
-            labelWidth={124}
+            labelWidth={126}
           />
 
           <CheckboxField register={register} error={errors.terms} />
 
-          <button type="submit">Submit</button>
+          <button
+            type="submit"
+            className="bg-[#08d] rounded-xl border-0 text-[#eee] cursor-pointer text-lg h-12 mt-7 text-center w-full transition-all duration-200 active:bg-[#06b] hover:bg-[#03e9f4] hover:text-white hover:rounded-md
+          hover:shadow-buttonShadow"
+          >
+            Submit
+          </button>
         </div>
       </form>
     </div>

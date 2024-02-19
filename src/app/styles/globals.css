@@ -1,4 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
+  padding: 12px;
   text-align: center;
   background: url("/static/react-zod-1.png") center / cover no-repeat fixed;
 }

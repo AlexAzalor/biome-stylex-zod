@@ -27,81 +27,36 @@ export const FormField = ({
 
   return (
     <>
-      <div>
+      <div className="h-[50px] relative w-full mt-7">
         <input
+          placeholder=" "
           autoComplete="new-password"
           type={inputType}
           {...register(name)}
+          className="input w-full h-full bg-[#303245] rounded-[12px] border-0 box-border text-[18px] text-[#eee] outline-0 px-5 py-1 [&:focus~.placeholder]:translate-y-[-30px] [&:focus~.placeholder]:translate-x-[10px] [&:focus~.placeholder]:scale-75 [&:not(:placeholder-shown)~.placeholder]:translate-y-[-30px] [&:not(:placeholder-shown)~.placeholder]:translate-x-[10px] [&:not(:placeholder-shown)~.placeholder]:scale-75 [&:focus~.cut]:translate-y-[8px] [&:not(:placeholder-shown)~.cut]:translate-y-[8px] [&:not(:placeholder-shown)~.placeholder]:text-[#dc2f55] [&:focus~.placeholder]:text-[#dc2f55]"
         />
 
-        {isPasswordInput && <i onClick={handleShowPassword}> {inputIcon}</i>}
+        {isPasswordInput && (
+          <i
+            onClick={handleShowPassword}
+            className="absolute top-[36%] right-[4%] cursor-pointer"
+          >
+            {" "}
+            {inputIcon}
+          </i>
+        )}
 
-        <div />
+        <div
+          className="cut bg-[#15172b] rounded-[10px] h-[20px] absolute left-[20px] top-[-20px] transition-transform duration-200 translate-y-0"
+          style={{ width: labelWidth }}
+        />
 
-        <label>{label}</label>
+        <label className="placeholder text-[#65657b] left-5 leading-3 pointer-events-none absolute origin-[0_50%] transition-transform duration-200 top-5">
+          {label}
+        </label>
       </div>
 
-      {error && <span>{error.message}</span>}
+      {error && <span className="text-[tomato] text-sm">{error.message}</span>}
     </>
   );
 };
-
-// const eye = ({
-//   eye: {
-//     position: "absolute",
-//     top: "36%",
-//     right: "4%",
-//     cursor: "pointer",
-//   },
-// });
-
-// const styles = ({
-//   labelWidth: (width) => ({
-//     width,
-//   }),
-//   error: {
-//     color: "tomato",
-//   },
-//   "input-container": {
-//     height: "50px",
-//     position: "relative",
-//     width: "100%",
-//   },
-//   ic2: {
-//     marginTop: "30px",
-//   },
-//   placeholder: {
-//     color: "#dc2f55",
-//     fontFamily: "sans-serif",
-//     left: "20px",
-//     lineHeight: "14px",
-//     pointerEvents: "none",
-//     position: "absolute",
-//     transformOrigin: "0 50%",
-//     transition: "transform 200ms, color 200ms",
-//     top: "20px",
-//     transform: "translateY(-30px) translateX(10px) scale(0.75)",
-//   },
-//   input: {
-//     backgroundColor: "#303245",
-//     borderRadius: "12px",
-//     border: 0,
-//     boxSizing: "border-box",
-//     color: "#eee",
-//     fontSize: "18px",
-//     height: "100%",
-//     outline: 0,
-//     padding: "4px 20px 0",
-//     width: "100%",
-//   },
-//   cut: {
-//     backgroundColor: "#15172b",
-//     borderRadius: "10px",
-//     height: "20px",
-//     left: "20px",
-//     position: "absolute",
-//     top: "-20px",
-//     transition: "transform 200ms",
-//     transform: "translateY(8px)",
-//   },
-// });
